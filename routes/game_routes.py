@@ -37,6 +37,11 @@ def make_guess(game_id):
 
     if guess == game.target_number:
         game.status = "won"
+
+        user = User.query.get(game.user_id)
+        if user.best_score is None or game.attempts < user.best_score:
+            user.best_score = game.attempts  # Update best score
+
         db.session.commit()
         return jsonify({"message": "Congratulations! You guessed the number!"})
 
@@ -66,16 +71,6 @@ def update_score():
 
     db.session.commit()
     return jsonify({"message": "Score updated successfully"}), 200
-
-# @game_bp.route('/leaderboard', methods=['GET'])
-# def get_leaderboard():
-#     top_players = db.session.query(Leaderboard, User.username).join(User).order_by(Leaderboard.score.desc()).limit(10).all()
-
-    
-#     leaderboard_data = [{"username": player.username, "score": lb.score} for lb, player in top_players]
-
-    
-#     return jsonify(leaderboard_data), 200
 
 @game_bp.route('/leaderboard', methods=['GET'])
 def get_leaderboard():
