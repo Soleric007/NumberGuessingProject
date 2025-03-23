@@ -7,7 +7,8 @@ from routes.auth_routes import auth_bp
 from routes.game_routes import game_bp
 from routes.user_routes import user_bp
 from flask_migrate import Migrate
-
+from routes.game_routes import game_bp  # Import the game blueprint
+from routes.leaderboard import leaderboard_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -21,6 +22,8 @@ migrate = Migrate(app, db)
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(game_bp, url_prefix='/game')
 app.register_blueprint(user_bp, url_prefix='/user')
+app.register_blueprint(leaderboard_bp, url_prefix='/leaderboard')
+
 
 if __name__ == "__main__":
     app.run(debug=True)

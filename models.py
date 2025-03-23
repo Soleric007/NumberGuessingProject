@@ -24,3 +24,12 @@ class Game(db.Model):
     attempts = db.Column(db.Integer, default=0)
     max_attempts = db.Column(db.Integer, default=10)
     status = db.Column(db.String(20), default="ongoing")  # "ongoing", "won", "lost"
+
+
+
+class Leaderboard(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    score = db.Column(db.Integer, nullable=False)
+    
+    user = db.relationship('User', backref=db.backref('leaderboard', lazy=True))

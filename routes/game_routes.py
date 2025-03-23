@@ -1,9 +1,9 @@
 import random
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from models import db, Game
+from models import db, Game, Leaderboard, User
 
-game_bp = Blueprint('game', __name__)
+game_bp = Blueprint('game', __name__)  # ✅ Define only ONCE
 
 @game_bp.route('/start-game', methods=['POST'])
 @jwt_required()
@@ -48,3 +48,31 @@ def make_guess(game_id):
     hint = "Too low" if guess < game.target_number else "Too high"
     db.session.commit()
     return jsonify({"hint": hint, "attempts_left": game.max_attempts - game.attempts})
+
+# ✅ DO NOT redefine game_bp here!
+
+@game_bp.route('/game/update-score', methods=['POST'])
+@jwt_required()
+def update_score():
+    user_id = get_jwt_identity()
+    data = request.get_json()
+
+    leaderboard_entry = Leaderboard.query.filter_by(user_id=user_id).first()
+    if not leaderboard_entry:
+        leaderboard_entry = Leaderboard(user_id=user_id, score=data.get('score', 0))
+        db.session.add(leaderboard_entry)
+    else:
+        leaderboard_entry.score += data.get('score', 0)
+
+    db.session.commit()
+    return jsonify({"message": "Score updated successfully"}), 200
+
+@game_bp.route('/leaderboard', methods=['GET'])
+def get_leaderboard():
+    top_players = db.session.query(Leaderboard, User.username).join(User).order_by(Leaderboard.score.desc()).limit(10).all()
+
+    
+    leaderboard_data = [{"username": player.username, "score": lb.score} for lb, player in top_players]
+
+    
+    return jsonify(leaderboard_data), 200
