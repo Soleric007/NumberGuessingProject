@@ -1,50 +1,18 @@
-# from flask import Blueprint, request, jsonify
-# from models import db, User
-# from flask_jwt_extended import create_access_token
-
-# auth_bp = Blueprint('auth', __name__)
-
-# @auth_bp.route('/register', methods=['POST'])
-
-# def register():
-#     data = request.json
-#     username = data.get('username')
-#     password = data.get('password')
-
-#     if User.query.filter_by(username=username).first():
-#         return jsonify({"error": "User already exists"}), 400
-
-#     user = User(username=username)
-#     user.set_password(password)
-#     db.session.add(user)
-#     db.session.commit()
-
-#     return jsonify({"message": "User registered successfully"}), 201
-
-# @auth_bp.route('/login', methods=['POST'])
-# def login():
-#     data = request.json
-#     username = data.get('username')
-#     password = data.get('password')
-
-#     user = User.query.filter_by(username=username).first()
-
-#     if not user or not user.check_password(password):
-#         return jsonify({"error": "Invalid credentials"}), 401
-
-#     access_token = create_access_token(identity=str(user.id))  # Convert user.id to string
-#     return jsonify({"access_token": access_token}), 200
-
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 from models import db, User
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity,
+    unset_jwt_cookies, set_access_cookies, get_jwt
+)
 from flask_bcrypt import Bcrypt
+import datetime
 
 bcrypt = Bcrypt()
 auth_bp = Blueprint('auth', __name__)
 
+# 🚀 Register User
 @auth_bp.route('/register', methods=['POST'])
-@jwt_required(optional=True)  # ✅ Allows first admin registration without a token
+@jwt_required(optional=True)  # ✅ Allows first-time registration without authentication
 def register():
     current_user_id = get_jwt_identity()
     current_user = User.query.get(current_user_id) if current_user_id else None
@@ -53,7 +21,7 @@ def register():
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
-    is_admin = data.get('is_admin', False)  # Default to False unless explicitly set
+    is_admin = data.get('is_admin', False)  # Default: False
 
     if not username or not email or not password:
         return jsonify({"error": "All fields are required"}), 400
@@ -61,22 +29,21 @@ def register():
     if User.query.filter((User.username == username) | (User.email == email)).first():
         return jsonify({"error": "User already exists"}), 400
 
-    # ✅ If no admin exists, the first registered user is automatically an admin
+    # ✅ If no admin exists, first user becomes an admin
     if User.query.count() == 0:
         is_admin = True  
-
-    # ❌ Prevent normal users from creating admins
     elif is_admin and (not current_user or not current_user.is_admin):
         return jsonify({"error": "Only admins can create another admin"}), 403
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(username=username, email=email, password=hashed_password, is_admin=is_admin)
+    new_user = User(username=username, email=email, password_hash=hashed_password, is_admin=is_admin)
 
     db.session.add(new_user)
     db.session.commit()
 
     return jsonify({"message": "User registered successfully"}), 201
 
+# 🔑 Login User & Set Token in Cookies
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.json
@@ -84,12 +51,50 @@ def login():
     password = data.get('password')
 
     user = User.query.filter_by(username=username).first()
-    if not user or not bcrypt.check_password_hash(user.password_hash, password):
+    if not user or not bcrypt.check_password_hash(user.password_hash, password):  # ✅ Fix: Uses `password_hash`
         return jsonify({"error": "Invalid credentials"}), 401
 
-    access_token = create_access_token(identity=user.id)  # Keep user.id as an integer
-    return jsonify({"access_token": access_token, "is_admin": user.is_admin}), 200
+    access_token = create_access_token(identity=str(user.id), expires_delta=datetime.timedelta(hours=2))
 
+    response = make_response(jsonify({
+        "message": "Login successful!",
+        "user_id": user.id,
+        "username": user.username,
+        "is_admin": user.is_admin,
+        "token": access_token  # ✅ Send token in response for frontend auth
+    }))
+
+    # ✅ Store JWT in both cookie & response (so frontend can access it)
+    response.set_cookie("access_token", access_token, httponly=True, secure=True, samesite="Strict")
+
+    return response
+
+# 🔓 Check Authentication
+@auth_bp.route('/check-auth', methods=['GET'])
+@jwt_required()
+def check_auth():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({
+        "user_id": user.id,
+        "username": user.username,
+        "is_admin": user.is_admin
+    }), 200
+
+# ❌ Logout User (Clears Token)
+@auth_bp.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    response = make_response(jsonify({"message": "Logged out successfully"}))
+    unset_jwt_cookies(response)
+    response.set_cookie("access_token", "", expires=0, httponly=True)
+    return response
+
+# 🔥 Admin Route: Get All Users
 @auth_bp.route('/admin/users', methods=['GET'])
 @jwt_required()
 def get_all_users():

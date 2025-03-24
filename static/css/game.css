@@ -1,0 +1,103 @@
+/* 🔥 Smooth transitions everywhere */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease-in-out;
+}
+
+/* 🎮 Centering everything */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f4f4f4;
+    transition: background 0.5s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* 🌙 Dark Mode Styling */
+body.dark-mode {
+    background: #121212;
+    color: #fff;
+}
+
+/* 🎲 Game Container */
+#game-container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* 🌑 Dark mode game container */
+body.dark-mode #game-container {
+    background: rgba(20, 20, 20, 0.95);
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+/* ✨ Input & Button Styles */
+.input-container {
+    margin: 20px 0;
+}
+
+input {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #333;
+    border-radius: 5px;
+    outline: none;
+    width: 80%;
+    background: white;
+    color: black;
+}
+
+body.dark-mode input {
+    background: #222;
+    color: white;
+    border-color: #fff;
+}
+
+/* 🎭 Buttons */
+button {
+    padding: 10px 15px;
+    font-size: 16px;
+    background: #008CBA;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* 🌙 Mode Toggle Button */
+#toggle-mode {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #fff;
+    font-size: 14px;
+}
+
+body.dark-mode #toggle-mode {
+    background: #fff;
+    color: #000;
+    border: 1px solid #000;
+}
+
+/* 🔥 Fade-in Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

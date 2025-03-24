@@ -1,0 +1,118 @@
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 1s ease-out;
+}
+
+/* Dark mode toggle effect */
+body {
+    transition: background 0.5s ease, color 0.5s ease;
+}
+/* 🌑 Dark Mode & 🌞 Light Mode */
+:root {
+    --bg-light: #f4f4f4;
+    --text-light: #222;
+    --bg-dark: #1e1e1e;
+    --text-dark: #fff;
+    --primary: #4CAF50;
+    --secondary: #222;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease-in-out;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🌞 Light Mode */
+.light-mode {
+    background-color: var(--bg-light);
+    color: var(--text-light);
+}
+
+/* 🌑 Dark Mode */
+.dark-mode {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+}
+
+/* 🔘 Game Container */
+#game-container {
+    max-width: 400px;
+    margin: 10vh auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    background-color: var(--secondary);
+    color: var(--text-dark);
+    transition: all 0.3s ease-in-out;
+}
+
+/* ✨ Input & Button */
+input {
+    padding: 10px;
+    font-size: 18px;
+    border: 2px solid var(--primary);
+    border-radius: 5px;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: #ff9800;
+}
+
+button {
+    background-color: var(--primary);
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #388E3C;
+}
+
+/* 🎭 Toggle Mode Button */
+#toggle-mode {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #ff9800;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+#toggle-mode:hover {
+    background: #e68900;
+}
+
+/* 🔥 Smooth Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#game-container, button, input {
+    animation: fadeIn 0.5s ease-in-out;
+}
