@@ -60,7 +60,12 @@ def make_guess(game_id):
     if game.attempts >= game.max_attempts:
         game.status = "lost"
         db.session.commit()
-        return jsonify({"message": "Game Over! No more attempts left."})
+        return jsonify({
+            "message": "Game Over! No more attempts left.",
+            "hint": f"The correct number was {game.target_number}",
+            "attempts_left": 0
+        })
+
 
     hint = "Too low" if guess < game.target_number else "Too high"
     db.session.commit()
