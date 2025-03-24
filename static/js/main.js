@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const toggleTheme = document.getElementById("toggleTheme");
 
     // 🌙 Theme Toggle
@@ -12,9 +12,24 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.add("dark");
     }
 
-    // 🚀 Check if user is logged in
-    if (localStorage.getItem("token")) {
-        window.location.href = "/game"; // Redirect to game page if already logged in
+    // 🚀 Check if user is logged in and token is valid
+    const token = localStorage.getItem("token");
+    if (token) {
+        try {
+            const response = await fetch("/auth/validate", {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` },
+            });
+
+            if (response.ok) {
+                window.location.href = "/game"; // Redirect if token is valid
+            } else {
+                localStorage.removeItem("token"); // Remove expired/invalid token
+            }
+        } catch (error) {
+            console.error("Error validating token:", error);
+            localStorage.removeItem("token");
+        }
     }
 
     // Handle Login/Register Redirection
@@ -31,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function openAuthModal(isLogin) {
     const authModal = document.createElement("div");
     authModal.innerHTML = `
-        <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div id="modal-bg" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg w-80 text-center">
                 <h2 class="text-xl font-bold">${isLogin ? "Login" : "Register"}</h2>
                 <input type="text" id="username" placeholder="Username" class="mt-3 p-2 w-full border rounded">
@@ -44,8 +59,12 @@ function openAuthModal(isLogin) {
     `;
     document.body.appendChild(authModal);
 
-    // Close Modal
-    document.getElementById("closeModal").addEventListener("click", () => authModal.remove());
+    // Close Modal with fade-out effect
+    document.getElementById("closeModal").addEventListener("click", () => {
+        const modalBg = document.getElementById("modal-bg");
+        modalBg.style.opacity = "0";
+        setTimeout(() => authModal.remove(), 300);
+    });
 
     // Handle Login/Register
     document.getElementById("authBtn").addEventListener("click", async () => {
@@ -58,19 +77,24 @@ function openAuthModal(isLogin) {
             return;
         }
 
-        const endpoint = isLogin ? "/login" : "/register";
-        const response = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
-        });
+        const endpoint = isLogin ? "/auth/login" : "/auth/register";
 
-        const data = await response.json();
-        if (response.ok) {
-            localStorage.setItem("token", data.token); // Store JWT token
-            window.location.href = "/game"; // Redirect to game page
-        } else {
-            authError.textContent = data.message || "Something went wrong!";
+        try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem("token", data.token); // Store JWT token
+                window.location.href = "/game"; // Redirect to game page
+            } else {
+                authError.textContent = data.message || "Invalid Credentials!";
+            }
+        } catch (error) {
+            authError.textContent = "Network error! Try again later.";
         }
     });
 }

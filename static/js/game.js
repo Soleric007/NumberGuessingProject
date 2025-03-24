@@ -43,15 +43,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ✅ Generate Random Number (GET from Backend)
     async function startGame() {
         try {
-            const response = await fetch("/game/start", { method: "POST", credentials: "include" });
+            const response = await fetch("/game/start-game", {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({})
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
             const data = await response.json();
             secretNumber = data.secret_number;
+            attempts = 0;
+            lastDifference = null;
+            attemptsDisplay.textContent = `${attempts} / ${maxAttempts}`;
+            message.textContent = "🎉 New game started! Make a guess.";
+            guessInput.value = "";
+            guessInput.disabled = false;
+            submitButton.disabled = false;
         } catch (error) {
             console.error("Error starting game:", error);
             message.textContent = "❌ Failed to start game!";
         }
     }
-
+    
+    document.getElementById("new-game").addEventListener("click", startGame);
     await startGame();
 
     submitButton.addEventListener("click", handleGuess);
