@@ -39,8 +39,8 @@ function loadUsers() {
                         <td>${user.username}</td>
                         <td>${user.is_admin ? "Admin" : "User"}</td>
                         <td>
-                            <button onclick="promoteUser(${user.id})">Promote</button>
-                            <button onclick="deleteUser(${user.id})">Delete</button>
+                            <button id="try" onclick="promoteUser(${user.id})">Promote</button>
+                            <button id="try" onclick="deleteUser(${user.id})">Delete</button>
                         </td>
                     </tr>
                 `;
@@ -62,7 +62,7 @@ function loadGames() {
                         <td>${game.id}</td>
                         <td>${game.user_id}</td>
                         <td>${game.attempts}</td>
-                        <td><button onclick="deleteGame(${game.id})">Delete</button></td>
+                        <td><button id="try" onclick="deleteGame(${game.id})">Delete</button></td>
                     </tr>
                 `;
             });
@@ -106,4 +106,28 @@ function deleteGame(gameId) {
         loadGames(); // Refresh game list
     })
     .catch(error => console.error("Error deleting game:", error));
+}
+document.addEventListener("DOMContentLoaded", function () {
+    fetchAdminLeaderboard();
+});
+
+function fetchAdminLeaderboard() {
+    fetch("/leaderboard/data")  // ✅ Match this with your Flask route
+        .then(response => response.json())
+        .then(data => {
+            const leaderboardTable = document.getElementById("adminLeaderboardTable"); // Ensure this ID exists
+            leaderboardTable.innerHTML = ""; // Clear previous data
+
+            data.forEach((player, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${player.username}</td>
+                        <td>${player.score}</td>
+                    </tr>
+                `;
+                leaderboardTable.innerHTML += row;
+            });
+        })
+        .catch(error => console.error("Error loading leaderboard:", error));
 }

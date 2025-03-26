@@ -61,7 +61,23 @@
             </section>
         </main>
     </div>
-
+    
+    <!-- Leaderboard -->
+<section id="leaderboard" class="admin-section hidden">
+    <h1>Leaderboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>🏅 Rank</th>
+                <th>👤 Username</th>
+                <th>📊 Score</th>
+            </tr>
+        </thead>
+        <tbody id="adminLeaderboardTable">
+            <!-- Dynamic leaderboard rows will be inserted here -->
+        </tbody>
+    </table>
+</section>
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 </body>
 </html>

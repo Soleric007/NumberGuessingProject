@@ -1,39 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Guessing Game</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
-    <script src="{{ url_for('static', filename='js/game.js') }}" defer></script>
-</head>
-<body class="light-mode">
-    <div class="header">
-        <button id="new-game">🔄 New Game</button>
-        <button id="logout-btn" class="logout">🚪 Logout</button>
-        <button id="leaderboard-btn" onclick="goToLeaderboard()">🏆 Leaderboard</button>
-        <button id="toggle-mode">🌙 Toggle Mode</button>
-    </div>
-    
+#try {
+    background: linear-gradient(45deg, #0ff, #00f);
+    border: none;
+    color: white;
+    font-size: 14px;  /* Reduced font size */
+    font-weight: bold;
+    padding: 8px 18px; /* Smaller padding */
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s ease-in-out;
+    text-transform: uppercase;
+    box-shadow: 0 0 8px #0ff, 0 0 12px #00f;
+}
 
-    <div id="game-container">
-        <h1>Guess the Number</h1>
-        <p>Try to guess the secret number between 1 and 100!</p>
+#try:hover {
+    background: linear-gradient(45deg, #00f, #0ff);
+    box-shadow: 0 0 10px #0ff, 0 0 18px #00f;
+    transform: scale(1.03);
+}
 
-        <div class="input-container">
-            <input type="number" id="guess" placeholder="Enter your guess">
-            <button id="submit-guess">Submit</button>
-        </div>
+/* Subtle Glow Animation */
+#try::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 250%;
+    height: 250%;
+    background: radial-gradient(circle, rgba(0, 255, 255, 0.4) 10%, transparent 70%);
+    transition: 0.4s ease;
+    transform: translate(-50%, -50%) scale(0);
+}
 
-        <p id="message"></p>
-        <div id="progress-bar"><div id="progress"></div></div> <!-- Progress bar -->
+#try:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+}
 
-        <p>Attempts: <span id="attempts">0</span></p>
-
-    </div>
-
-    <audio id="success-sound" src="{{ url_for('static', filename='sounds/success.mp3') }}"></audio>
-    <audio id="error-sound" src="{{ url_for('static', filename='sounds/error.wav') }}"></audio>
-    <audio id="fail-sound" src="{{ url_for('static', filename='sounds/failed.mp3') }}"></audio>
-</body>
-</html>
+/* Click Effect */
+#try:active {
+    transform: scale(0.96);
+    box-shadow: 0 0 6px #0ff, 0 0 10px #00f;
+}
