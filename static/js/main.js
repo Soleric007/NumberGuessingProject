@@ -50,6 +50,7 @@ function openAuthModal(isLogin) {
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg w-80 text-center">
                 <h2 class="text-xl font-bold">${isLogin ? "Login" : "Register"}</h2>
                 <input type="text" id="username" placeholder="Username" class="mt-3 p-2 w-full border rounded">
+                 <input type="email" id="email" placeholder="Email" class="mt-3 p-2 w-full border rounded">
                 <input type="password" id="password" placeholder="Password" class="mt-3 p-2 w-full border rounded">
                 <button id="authBtn" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded w-full">${isLogin ? "Login" : "Register"}</button>
                 <p id="authError" class="text-red-500 mt-2 text-sm"></p>
@@ -69,6 +70,7 @@ function openAuthModal(isLogin) {
     // Handle Login/Register
     document.getElementById("authBtn").addEventListener("click", async () => {
         const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
         const authError = document.getElementById("authError");
 
@@ -83,7 +85,7 @@ function openAuthModal(isLogin) {
             const response = await fetch(endpoint, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ username, email, password }),
             });
 
             const data = await response.json();
