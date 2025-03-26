@@ -64,3 +64,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial fetch
     fetchLeaderboard();
 });
+function goToGame() {
+    window.location.href = "/game"; // Change URL if needed
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const logoutBtn = document.getElementById("logout-btn");
+
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("jwt");  // Remove JWT token
+        sessionStorage.removeItem("jwt");
+        window.location.href = "/";  // Redirect to login page
+    });
+});

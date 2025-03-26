@@ -32,7 +32,9 @@ body.dark-mode {
     text-align: center;
     animation: fadeIn 1s ease-in-out;
 }
-
+#submit-guess{
+    margin-top: 10px;
+}
 /* 🌑 Dark mode game container */
 body.dark-mode #game-container {
     background: rgba(20, 20, 20, 0.95);
@@ -94,6 +96,71 @@ body.dark-mode #toggle-mode {
     background: #fff;
     color: #000;
     border: 1px solid #000;
+}
+#new-game {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #008CBA;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+#new-game:hover {
+    background: #e68900;
+}
+
+/* Logout Button - Comes After New Game */
+#logout-btn {
+    position: absolute;
+    top: 15px;
+    left: 170px; /* Moves it right after New Game */
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+#logout-btn:hover {
+    background: #dc2626;
+}
+
+/* Leaderboard Button - Before Toggle Mode */
+#leaderboard-btn {
+    position: absolute;
+    top: 15px;
+    right: 170px; /* Moves it slightly left, before toggle mode */
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+#leaderboard-btn:hover {
+    background: #388E3C;
+}
+
+/* Toggle Mode Button - Stays at the Far Right */
+#toggle-mode {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #fff;
+    font-size: 14px;
 }
 
 /* 🔥 Fade-in Animation */

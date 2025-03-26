@@ -106,3 +106,42 @@ button {
 #sortAsc, #sortDesc {
     margin-bottom: 10px;
 }
+/* Buttons inside leaderboard */
+.container .flex {
+    justify-content: space-between;
+}
+
+/* Back to Game Button */
+#back-to-game {
+    background: #f59e0b;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s ease-in-out;
+    margin-left: 20px;
+}
+
+#back-to-game:hover {
+    background: #d97706;
+}
+
+/* Logout Button */
+#logout-btn {
+    background: #ef4444;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s ease-in-out;
+    margin-left: 90px;
+    margin-bottom: 20px;
+}
+
+#logout-btn:hover {
+    background: #dc2626;
+}

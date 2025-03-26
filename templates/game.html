@@ -8,7 +8,13 @@
     <script src="{{ url_for('static', filename='js/game.js') }}" defer></script>
 </head>
 <body class="light-mode">
-    <button id="toggle-mode">🌙 Toggle Mode</button>
+    <div class="header">
+        <button id="new-game">🔄 New Game</button>
+        <button id="logout-btn" class="logout">🚪 Logout</button>
+        <button id="leaderboard-btn" onclick="goToLeaderboard()">🏆 Leaderboard</button>
+        <button id="toggle-mode">🌙 Toggle Mode</button>
+    </div>
+    
 
     <div id="game-container">
         <h1>Guess the Number</h1>
@@ -24,7 +30,6 @@
 
         <p>Attempts: <span id="attempts">0</span></p>
 
-        <button id="new-game">New Game</button>
     </div>
 
     <audio id="success-sound" src="{{ url_for('static', filename='sounds/success.mp3') }}"></audio>

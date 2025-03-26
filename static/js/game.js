@@ -197,3 +197,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 });
+document.addEventListener("DOMContentLoaded", () => {
+    const logoutBtn = document.getElementById("logout-btn");
+
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("jwt");  // Remove JWT token
+        sessionStorage.removeItem("jwt");
+        window.location.href = "/";  // Redirect to login page
+    });
+});
+function goToLeaderboard() {
+    // Redirect to leaderboard page
+    window.location.href = "/leaderboard";
+}

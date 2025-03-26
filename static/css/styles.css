@@ -67,6 +67,7 @@ input {
     border-radius: 5px;
     outline: none;
     transition: 0.3s;
+    
 }
 
 input:focus {
@@ -87,7 +88,14 @@ button {
 button:hover {
     background-color: #388E3C;
 }
-
+#closeModal:hover{
+    background-color: rgb(37 99 235);
+    color: #fff;
+    border: 1px solid;
+    border-style: none;
+    width: 70px;
+    height: 30px;
+}
 /* 🎭 Toggle Mode Button */
 #toggle-mode {
     position: fixed;
