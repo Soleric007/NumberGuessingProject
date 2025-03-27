@@ -1,11 +1,11 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-from flask_cors import CORS  # ✅ Added CORS for frontend-backend interaction
-
+from flask_cors import CORS 
+from datetime import datetime
 from config import Config
-from models import db, bcrypt
+from models import db, bcrypt, Feedback
 from routes.auth_routes import auth_bp
 from routes.game_routes import game_bp
 from routes.user_routes import user_bp
@@ -51,6 +51,51 @@ def register():
 def leaderboard():
     return render_template('leaderboard.html')
 
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+@app.route("/feedback", methods=["GET", "POST"])
+def feedback():
+    if request.method == "POST":
+        data = request.json
+        name = data.get("name")
+        email = data.get("email")
+        message = data.get("message")
+
+        if not name or not email or not message:
+            return jsonify({"error": "All fields are required"}), 400
+
+        new_feedback = Feedback(name=name, email=email, message=message)
+        db.session.add(new_feedback)
+        db.session.commit()
+        
+        return jsonify({"success": "Feedback submitted!"})
+
+    return render_template("feedback.html")
+
+@app.route("/admin/feedbacks", methods=["GET"])
+def get_feedbacks():
+    try:
+        feedbacks = Feedback.query.order_by(Feedback.id.desc()).all()
+        
+        if not feedbacks:
+            return jsonify([])  # Return an empty list if no feedback exists
+        
+        feedback_list = [
+            {
+                "id": fb.id,
+                "name": fb.name,
+                "email": fb.email,
+                "message": fb.message,
+                # ✅ Check if `submitted_at` is None before formatting
+                "submitted_at": fb.submitted_at.strftime("%Y-%m-%d %H:%M:%S") if fb.submitted_at else "N/A",
+            }
+            for fb in feedbacks
+        ]
+        return jsonify(feedback_list)
+
+    except Exception as e:
+        print(f"Error fetching feedbacks: {e}")  # Log the error in the terminal
+        return jsonify({"error": "Internal Server Error"}), 500
+

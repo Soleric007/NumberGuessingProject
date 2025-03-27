@@ -12,16 +12,28 @@ def start_game():
     data = request.json
     level = data.get('level', 'low')
 
-    ranges = {"low": 99, "moderate": 999, "expert": 9999}
-    if level not in ranges:
+    difficulty_settings = {
+        "low": {"range": 99, "max_attempts": 10},
+        "moderate": {"range": 999, "max_attempts": 7},
+        "expert": {"range": 9999, "max_attempts": 5}
+    }
+
+    if level not in difficulty_settings:
         return jsonify({"error": "Invalid difficulty level"}), 400
 
-    target_number = random.randint(0, ranges[level])
-    game = Game(user_id=user_id, target_number=target_number)
+    settings = difficulty_settings[level]
+    target_number = random.randint(0, settings["range"])
+
+    game = Game(user_id=user_id, target_number=target_number, difficulty=level, max_attempts=settings["max_attempts"])
     db.session.add(game)
     db.session.commit()
 
-    return jsonify({"message": "Game started", "game_id": game.id, "level": level, "attempts_left": game.max_attempts})
+    return jsonify({
+        "message": "Game started",
+        "game_id": game.id,
+        "level": level,
+        "attempts_left": game.max_attempts
+    })
 
 @game_bp.route('/guess/<int:game_id>', methods=['POST'])
 @jwt_required()
@@ -92,16 +104,3 @@ def update_score():
     db.session.commit()
     return jsonify({"message": "Score updated successfully"}), 200
 
-# @game_bp.route('/leaderboard', methods=['GET'])
-# def get_leaderboard():
-#     top_players = (
-#         db.session.query(Leaderboard, User)
-#         .join(User, Leaderboard.user_id == User.id)
-#         .order_by(Leaderboard.score.desc())
-#         .limit(10)
-#         .all()
-#     )
-
-#     leaderboard_data = [{"username": player.username, "score": lb.score} for lb, player in top_players]
-
-#     return jsonify(leaderboard_data), 200

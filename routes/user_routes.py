@@ -84,3 +84,4 @@ def get_all_users():
     users_data = [{"id": user.id, "username": user.username, "email": user.email, "games_played": user.games_played} for user in users]
 
     return jsonify(users_data), 200
+

@@ -131,7 +131,22 @@ body.dark-mode #toggle-mode {
 #logout-btn:hover {
     background: #dc2626;
 }
+#contact-btn {
+    position: absolute;
+    top: 15px;
+    left: 290px; /* Moves it right after New Game */
+    background: #f9a826;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
 
+#contact-btn:hover {
+    background: #FFBF00;
+}
 /* Leaderboard Button - Before Toggle Mode */
 #leaderboard-btn {
     position: absolute;
@@ -167,4 +182,68 @@ body.dark-mode #toggle-mode {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+/* 📌 Difficulty Buttons - Right Side, Vertical Column */
+.difficulty-selection {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 🎮 Base Button Styling - Glassmorphic Look */
+.difficulty-selection button {
+    width: 190px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+/* 🟢 EASY - Neon Blue Glow */
+#difficulty-low {
+    background: linear-gradient(135deg, rgba(0, 255, 255, 0.3), rgba(0, 255, 255, 0.1));
+    border: 2px solid rgba(0, 255, 255, 0.6);
+}
+#difficulty-low:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+    transform: scale(1.1);
+}
+
+/* 🟠 MEDIUM - Sci-Fi Orange Glow */
+#difficulty-moderate {
+    background: linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 165, 0, 0.1));
+    border: 2px solid rgba(255, 165, 0, 0.6);
+}
+#difficulty-moderate:hover {
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.8);
+    transform: scale(1.1);
+}
+
+/* 🔴 HARD - Intense Red Glow */
+#difficulty-expert {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(255, 0, 0, 0.1));
+    border: 2px solid rgba(255, 0, 0, 0.6);
+}
+#difficulty-expert:hover {
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    transform: scale(1.1);
+}
+
+/* 🔥 Button Click Effect */
+.difficulty-selection button:active {
+    transform: scale(0.95);
 }

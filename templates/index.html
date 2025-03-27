@@ -13,16 +13,17 @@
     
     <!-- Navbar -->
     <nav class="p-5 flex justify-between items-center bg-gray-200 dark:bg-gray-800">
-        <h1 class="text-2xl font-bold">Number Guessing Game</h1>
+        <h1 class="text-2xl font-bold">🎲 Number Guessing Game</h1>
         <button id="toggleTheme" class="px-3 py-1 bg-gray-900 text-white dark:bg-white dark:text-black rounded">
             🌙 Dark Mode
         </button>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="flex flex-col items-center justify-center h-screen">
-        <h2 class="text-4xl font-bold mb-4 animate-fade-in">Ready to Play?</h2>
-        <p class="text-lg mb-6 opacity-80">Guess the correct number and top the leaderboard!</p>
+    <section class="flex flex-col items-center justify-center h-screen text-center px-6">
+        <h2 class="text-5xl font-bold mb-4 animate-fade-in">Test Your Luck & Skill!</h2>
+        <p class="text-lg mb-6 opacity-80 max-w-lg">
+            Think you're a master of guessing? Try to predict the secret number and climb the leaderboard. The more accurate you are, the higher your score!
+        </p>
         
         <div class="space-x-4">
             <a href="/login" class="px-6 py-2 bg-blue-600 text-white rounded shadow hover:scale-105 transition">Login</a>
@@ -30,5 +31,38 @@
         </div>
     </section>
 
+    <!-- Game Information Section -->
+    <section class="p-10 bg-white dark:bg-gray-800 text-center">
+        <h3 class="text-3xl font-semibold mb-6">How to Play</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="p-5 border rounded-lg shadow dark:border-gray-600">
+                <h4 class="text-xl font-bold">1️⃣ Pick a Number</h4>
+                <p class="opacity-80">Choose a number within the given range and submit your guess.</p>
+            </div>
+            <div class="p-5 border rounded-lg shadow dark:border-gray-600">
+                <h4 class="text-xl font-bold">🎯 Aim for Accuracy</h4>
+                <p class="opacity-80">The closer you are to the secret number, the better your score.</p>
+            </div>
+            <div class="p-5 border rounded-lg shadow dark:border-gray-600">
+                <h4 class="text-xl font-bold">🏆 Climb the Leaderboard</h4>
+                <p class="opacity-80">Earn points and compete against others for the top spot.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Gallery Section -->
+    <section class="p-10 text-center">
+        <h3 class="text-3xl font-semibold mb-6">Game Highlights</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+            <img src="{{ url_for('static', filename='images/gameplay1.jpg') }}" alt="Gameplay Screenshot" class="rounded-lg shadow-md">
+            <img src="{{ url_for('static', filename='images/gameplay2.jpg') }}" alt="Game Interface" class="rounded-lg shadow-md">
+            <img src="{{ url_for('static', filename='images/gameplay3.jpg') }}" alt="Leaderboard Preview" class="rounded-lg shadow-md">
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="p-5 text-center bg-gray-200 dark:bg-gray-800">
+        <p>&copy; 2025 Number Guessing Game. All rights reserved.</p>
+    </footer>
 </body>
 </html>

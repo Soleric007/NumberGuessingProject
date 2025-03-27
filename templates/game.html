@@ -6,13 +6,20 @@
     <title>Number Guessing Game</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
     <script src="{{ url_for('static', filename='js/game.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1"></script>
 </head>
 <body class="light-mode">
     <div class="header">
         <button id="new-game">🔄 New Game</button>
         <button id="logout-btn" class="logout">🚪 Logout</button>
+        <button id="contact-btn" class="logout">Contact Us</button>
         <button id="leaderboard-btn" onclick="goToLeaderboard()">🏆 Leaderboard</button>
         <button id="toggle-mode">🌙 Toggle Mode</button>
+    </div>
+    <div class="difficulty-selection">
+        <button id="difficulty-low">😌 Easy</button>
+        <button id="difficulty-moderate">🤔 Medium</button>
+        <button id="difficulty-expert">😈 Hard</button>
     </div>
     
 
@@ -21,7 +28,7 @@
         <p>Try to guess the secret number between 1 and 100!</p>
 
         <div class="input-container">
-            <input type="number" id="guess" placeholder="Enter your guess">
+            <input type="number" id="guess" placeholder="Enter your guess" min="1">
             <button id="submit-guess">Submit</button>
         </div>
 

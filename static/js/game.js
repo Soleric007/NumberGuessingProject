@@ -37,32 +37,48 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-    async function startGame() {
-        try {
-            const response = await fetch("/game/start-game", {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({})
-            });
+    async function startGame(level = "low") {
+        
+    try {
+        localStorage.setItem("difficulty", level);
 
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const response = await fetch("/game/start-game", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ level })
+        });
 
-            const data = await response.json();
-            gameId = data.game_id;
-            secretNumber = data.secret_number;
-            attempts = 0;
-            lastDifference = null;
-            attemptsDisplay.textContent = `${attempts} / ${maxAttempts}`;
-            message.textContent = "🎉 New game started! Make a guess.";
-            guessInput.value = "";
-            guessInput.disabled = false;
-            submitButton.disabled = false;
-        } catch (error) {
-            console.error("Error starting game:", error);
-            message.textContent = "❌ Failed to start game!";
-        }
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+        const data = await response.json();
+        gameId = data.game_id;
+        maxAttempts = data.attempts_left;
+        attempts = 0;
+        attemptsDisplay.textContent = `${attempts} / ${maxAttempts}`;
+        message.textContent = "🎉 New game started! Make a guess.";
+        guessInput.value = "";
+        guessInput.disabled = false;
+        submitButton.disabled = false;
+
+        const maxRanges = {
+            low: 100,
+            moderate: 999,
+            expert: 9999
+        };
+        guessInput.max = maxRanges[level] || 100;
+        guessInput.placeholder = `Enter a number (1-${guessInput.max})`; 
+    } catch (error) {
+        console.error("Error starting game:", error);
+        message.textContent = "❌ Failed to start game!";
     }
+}
+
+// Add buttons for difficulty selection in game.html
+document.getElementById("difficulty-low").addEventListener("click", () => startGame("low"));
+document.getElementById("difficulty-moderate").addEventListener("click", () => startGame("moderate"));
+document.getElementById("difficulty-expert").addEventListener("click", () => startGame("expert"));
+
     
     document.getElementById("new-game").addEventListener("click", startGame);
     await startGame();
@@ -76,8 +92,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!gameId || submitButton.disabled) return;
     
         let guess = parseInt(guessInput.value);
-        if (isNaN(guess) || guess < 1 || guess > 100) {
-            message.textContent = "Enter a valid number (1-100)";
+
+                // ✅ Dynamically set validation based on difficulty
+        const maxRanges = {
+            low: 100,
+            moderate: 999,
+            expert: 9999
+        };
+
+        const currentMax = maxRanges[localStorage.getItem("difficulty")] || 100;
+
+        if (isNaN(guess) || guess < 1 || guess > currentMax) {
+            message.textContent = `Enter a valid number (1-${currentMax})`;
             return;
         }
     
@@ -101,14 +127,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     
             let hintMessage = data.message ? data.message : (data.hint ? data.hint : "No hint provided");
             message.innerHTML = hintMessage;
-
     
             attempts = maxAttempts - (data.attempts_left ?? maxAttempts);
             attemptsDisplay.textContent = `${attempts} / ${maxAttempts}`;
     
-            if (data.hint && data.hint.toLowerCase().includes("correct")) {
+            if (data.message && data.message.toLowerCase().includes("congratulations")) {
                 message.innerHTML = "🎉 <b>Correct!</b> You guessed it!";
-                successSound.play();
+                successSound.play();  // ✅ Play success sound only on win
                 submitButton.disabled = true;
                 guessInput.disabled = true;
                 confettiEffect();
@@ -136,7 +161,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
             lastDifference = difference;
-            errorSound.play();
+            errorSound.play();  // ✅ Play only if the guess is wrong
     
         } catch (error) {
             console.error("Error making guess:", error);
@@ -144,22 +169,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
     
+    
     function endGame() {
         message.innerHTML = `💀 Game Over! The correct number was ${secretNumber}`;
         guessInput.disabled = true;
         submitButton.disabled = true;
-        failSound.play();
-        setTimeout(askToRestart, 1500);
+        setTimeout(() => {
+            failSound.play();
+            askToRestart();
+        }, 500);  // ✅ Delay so sound plays at the right time
     }
+    
 
-    function askToRestart() {
+    async function askToRestart() {
         let restart = confirm("Do you want to play again?");
         if (restart) {
-            startGame();
+            await startGame();  // ✅ Ensure game restarts properly
         } else {
             lockGame();
         }
     }
+    
 
     function lockGame() {
         message.innerHTML += "<br>🔒 Game locked! Refresh to play again.";
@@ -186,16 +216,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     async function submitScore(score) {
         try {
-            await fetch("/leaderboard/submit", {
+            await fetch("/game/update-score", {  
                 method: "POST",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id: userId, score })
+                headers: { 
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("token")}` 
+                },
+                body: JSON.stringify({ score })
             });
         } catch (error) {
             console.error("Error submitting score:", error);
         }
     }
+    
 });
 document.addEventListener("DOMContentLoaded", () => {
     const logoutBtn = document.getElementById("logout-btn");
@@ -209,4 +243,31 @@ document.addEventListener("DOMContentLoaded", () => {
 function goToLeaderboard() {
     // Redirect to leaderboard page
     window.location.href = "/leaderboard";
+}
+function confettiEffect() {
+    const duration = 2 * 1000; // 2 seconds
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2000 };
+
+    function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    const interval = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            return;
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({
+            particleCount,
+            angle: randomInRange(55, 125),
+            spread: 70,
+            origin: { y: 0.6 },
+            ...defaults
+        });
+    }, 250);
 }

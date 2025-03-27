@@ -7,7 +7,8 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
-    overflow: hidden;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+    overflow-y: auto; 
 }
 
 /* --- Sidebar --- */
@@ -58,9 +59,11 @@ body {
 /* --- Main Content --- */
 .content {
     flex: 1;
-    margin-left: 320px; /* Increase margin to push content out of the sidebar */
+    margin-left: 300px;
     padding: 20px;
     transition: all 0.3s ease-in-out;
+    overflow-y: auto;
+    max-height: 100vh;
 }
 
 /* --- Dashboard --- */
@@ -74,26 +77,6 @@ body {
     color: #00ffff;
     text-shadow: 0 0 15px #00ffff;
     margin-bottom: 20px;
-}
-
-/* --- Stats Cards --- */
-.stats {
-    display: flex;
-    gap: 20px;
-}
-
-.stats div {
-    background: rgba(0, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 10px;
-    font-size: 1.2rem;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
-    transition: transform 0.3s ease-in-out;
-}
-
-.stats div:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
 }
 
 /* --- Tables --- */
@@ -116,6 +99,17 @@ th {
     text-transform: uppercase;
     font-weight: bold;
 }
+
+td {
+    color: white;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Prevent text overflow in tables */
+td:nth-child(1) { width: 5%; text-align: center; }  /* ID */
+td:nth-child(2) { width: 15%; } /* Name */
+td:nth-child(3) { width: 25%; word-break: break-word; } /* Email */
+td:nth-child(4) { width: 50%; word-break: break-word; white-space: normal; } /* Message */
 
 tr:hover {
     background: rgba(0, 255, 255, 0.2);
@@ -147,13 +141,15 @@ tr:hover {
         transform: translateY(0);
     }
 }
+
+/* --- Button Styling --- */
 #try {
     background: linear-gradient(45deg, #0ff, #00f);
     border: none;
     color: white;
-    font-size: 14px;  /* Reduced font size */
+    font-size: 14px;
     font-weight: bold;
-    padding: 8px 18px; /* Smaller padding */
+    padding: 8px 18px;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
@@ -169,7 +165,6 @@ tr:hover {
     transform: scale(1.03);
 }
 
-/* Subtle Glow Animation */
 #try::before {
     content: "";
     position: absolute;
@@ -192,4 +187,3 @@ tr:hover {
     transform: scale(0.96);
     box-shadow: 0 0 6px #0ff, 0 0 10px #00f;
 }
-

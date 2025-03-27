@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from sqlalchemy.orm import relationship
-
+from datetime import datetime
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 
@@ -13,6 +13,7 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False) 
     games_played = db.Column(db.Integer, default=0)
     best_score = db.Column(db.Integer, default=None)
+    
 
     # Hash password
     def set_password(self, password):
@@ -42,3 +43,10 @@ class Leaderboard(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="CASCADE"), nullable=False)
     score = db.Column(db.Integer, nullable=False)
     difficulty = db.Column(db.String(20), nullable=False, default="easy")  # Storing difficulty in leaderboard
+
+class Feedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    submitted_at = db.Column(db.DateTime, default=datetime.utcnow)

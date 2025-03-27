@@ -131,3 +131,31 @@ function fetchAdminLeaderboard() {
         })
         .catch(error => console.error("Error loading leaderboard:", error));
 }
+async function loadFeedback() {
+    try {
+        const response = await fetch("/admin/feedbacks");
+        const feedbacks = await response.json();
+
+        const tableBody = document.getElementById("feedbackTableBody");
+        tableBody.innerHTML = ""; // ✅ Clear old data
+
+        feedbacks.forEach(feedback => {
+            const row = `
+                <tr>
+                    <td>${feedback.id}</td>
+                    <td>${feedback.name}</td>
+                    <td>${feedback.email}</td>
+                    <td>${feedback.message}</td>
+                    <td>${feedback.submitted_at}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    } catch (error) {
+        console.error("Error loading feedback:", error);
+    }
+}
+
+// ✅ Load Feedback when Admin Panel is Opened
+document.addEventListener("DOMContentLoaded", loadFeedback);
+
